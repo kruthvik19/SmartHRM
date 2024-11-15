@@ -91,32 +91,37 @@ async def delete_client(request: Request, client_id: str):
     response = await forward_request(request, "DELETE", "clients", f"/clients/{client_id}")
     return response
 
-# Requirements CRUD Operations
+# 1. Get all requirements (GET)
 @intermediate_app.get("/requirements", response_model=List[Dict])
 async def get_requirements(request: Request):
     response = await forward_request(request, "GET", "requirements", "/requirements")
     return response
 
+# 2. Get all requirements by client ID (GET)
 @intermediate_app.get("/requirements/client/{cl_id}", response_model=List[Dict])
 async def get_requirements_by_client(request: Request, cl_id: str):
-    response = await forward_request(request, "GET", "requirements", f"/requirements/client/{cl_id}")
+    response = await forward_request(request, "GET", "requirements", f"/requirements/{cl_id}")
     return response
 
-@intermediate_app.get("/requirements/{rq_id}", response_model=Dict)
+# 3. Get a single requirement by ID (GET)
+@intermediate_app.get("/requirements/rq_id/{rq_id}", response_model=Dict)
 async def get_requirement(request: Request, rq_id: str):
-    response = await forward_request(request, "GET", "requirements", f"/requirements/{rq_id}")
+    response = await forward_request(request, "GET", "requirements", f"/requirements/rq_id/{rq_id}")
     return response
 
+# 4. Create a new requirement for a specific client (POST)
 @intermediate_app.post("/requirements/{cl_id}")
 async def create_requirement_for_client(request: Request, cl_id: str):
     response = await forward_request(request, "POST", "requirements", f"/requirements/{cl_id}")
     return response
 
+# 5. Update a requirement by ID (PUT)
 @intermediate_app.put("/requirements/{rq_id}")
 async def update_requirement(request: Request, rq_id: str):
     response = await forward_request(request, "PUT", "requirements", f"/requirements/{rq_id}")
     return response
 
+# 6. Delete a requirement by ID (DELETE)
 @intermediate_app.delete("/requirements/{rq_id}")
 async def delete_requirement(request: Request, rq_id: str):
     response = await forward_request(request, "DELETE", "requirements", f"/requirements/{rq_id}")
@@ -164,6 +169,6 @@ async def delete_candidate(request: Request, cd_id: str):
         logger.error(f"An unexpected error occurred while deleting candidate with ID {cd_id}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-#if __name__ == "__main__":
-#    port = int(os.getenv("INTERMEDIATE_API_PORT", 8003))  # Default to 8003 if not set
-#    uvicorn.run(intermediate_app, host="0.0.0.0", port=port)
+if __name__ == "__main__":
+    port = int(os.getenv("INTERMEDIATE_API_PORT", 8000))  # Default to 8003 if not set
+    uvicorn.run(intermediate_app, host="0.0.0.0", port=port)
